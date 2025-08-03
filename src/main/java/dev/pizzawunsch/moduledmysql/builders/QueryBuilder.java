@@ -5,6 +5,9 @@ import dev.pizzawunsch.moduledmysql.annotations.TableName;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -280,6 +283,26 @@ public class QueryBuilder {
             }
         }
         throw new IllegalStateException("No primary key column defined in class " + clazz.getName());
+    }
+
+    /**
+     * Prepares a {@link PreparedStatement} from the built SQL query using the provided
+     * JDBC {@link Connection} and automatically sets all the parameters in the statement.
+     *
+     * <p>This method handles parameter binding by iterating over the parameters list
+     * and setting each one on the {@link PreparedStatement} in the correct order.</p>
+     *
+     * @param connection the JDBC connection to create the prepared statement from
+     * @return a {@link PreparedStatement} with the SQL query and all parameters set
+     * @throws SQLException if a database access error occurs or the SQL statement is invalid
+     */
+    public PreparedStatement prepareStatement(Connection connection) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(getQuery());
+        List<Object> params = getParameters();
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+        return ps;
     }
 
     /**
