@@ -3,6 +3,30 @@
 **Moduled-MySQL** is a lightweight, annotation-driven Java library for seamless integration with MySQL databases.  
 It enables easy table creation, data persistence, and asynchronous CRUD operations with minimal configuration and no heavy ORM frameworks.
 
+## Table of Contents
+
+- [Moduled-MySQL](#moduled-mysql)
+    - [Features](#features)
+    - [Getting Started](#getting-started)
+        - [1. Define your Model](#1-define-your-model)
+        - [2. Connect to Database](#2-connect-to-database)
+        - [3. Create Table](#3-create-table)
+        - [4. Perform CRUD Operations](#4-perform-crud-operations)
+    - [Query Builder](#query-builder)
+        - [Example Table-Class](#example-table-class)
+        - [Select All Fields From a Class](#select-all-fields-from-a-class)
+        - [Insert From Annotated Object](#insert-from-annotated-object)
+        - [Update With Primary Key](#update-with-primary-key)
+        - [Delete By Primary Key](#delete-by-primary-key)
+        - [Join Example](#join-example)
+        - [QueryGroup (Nested Conditions)](#querygroup-nested-conditions)
+        - [Parameter Bindings](#parameter-bindings)
+    - [Mapping a Single Row to a Java Object](#mapping-a-single-row-to-a-java-object)
+    - [Implementation](#implementation)
+        - [Gradle](#gradle)
+        - [Maven](#maven)
+    - [Requirements](#requirements)
+
 ---
 
 ## Features
@@ -293,6 +317,53 @@ All values are safely bound using PreparedStatement, preventing SQL injection:
 ```java
 PreparedStatement ps = qb.prepareStatement(connection);
 ```
+
+---
+
+## Mapping a Single Row to a Java Object
+
+The `ResultMapper.mapRow` method allows you to convert a single row from a `ResultSet` into a typed Java object. This is particularly useful when fetching single records, such as detail views or unique lookups.
+
+To use this functionality, your target class must have:
+
+- A public no-argument constructor
+- Fields annotated with `@ColumnName`, specifying the corresponding column names in the database
+
+#### Example
+
+Assuming a table `users` with columns `id`, `email`, and `name`, and a corresponding Java class:
+
+```java
+@TableName("users")
+public class User {
+    @ColumnName(value = "id", primaryKey = true)
+    private int id;
+
+    @ColumnName("email")
+    private String email;
+
+    @ColumnName("name")
+    private String name;
+
+    // Getters and setters omitted for brevity
+}
+```
+You can map a single row from a query result like this:
+```java
+QueryBuilder qb = QueryBuilder
+    .select(User.class)
+    .from(User.class)
+    .where("t0.id = ?", 1);
+
+PreparedStatement ps = qb.prepareStatement(connection);
+ResultSet rs = ps.executeQuery();
+
+User user = null;
+if (rs.next()) {
+    user = ResultMapper.mapRow(rs, User.class);
+}
+```
+To map multiple rows into a list of objects, use `ResultMapper.mapAll(resultSet, User.class)` instead.
 
 ---
 
