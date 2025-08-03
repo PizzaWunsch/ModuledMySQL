@@ -72,6 +72,49 @@ GenericRepository.deleteAsync(User.class, 1, DatabaseManager.getConnection());
 
 ---
 
+## Implementation
+
+You can easily include **ModuledMySQL** in your project using [JitPack](https://jitpack.io/).
+
+### Gradle
+
+Add the JitPack repository to your `build.gradle`:
+
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+Then add the dependency:
+```gradle
+dependencies {
+    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.0-SNAPSHOT'
+}
+```
+
+### Maven
+Add the JitPack repository to your pom.xml:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+Then add the dependency:
+```xml
+<dependency>
+    <groupId>com.github.PizzaWunsch</groupId>
+    <artifactId>ModuledMySQL</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+---
+
+
 ## Requirements
 
 - Java 8 or higher
