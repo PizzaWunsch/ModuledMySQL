@@ -108,7 +108,7 @@ Then add the dependency:
 <dependency>
     <groupId>com.github.PizzaWunsch</groupId>
     <artifactId>ModuledMySQL</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 </dependency>
 ```
 
