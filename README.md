@@ -383,7 +383,7 @@ repositories {
 Then add the dependency:
 ```gradle
 dependencies {
-    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.3-SNAPSHOT'
+    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.4-SNAPSHOT'
 }
 ```
 
@@ -403,7 +403,7 @@ Then add the dependency:
 <dependency>
     <groupId>com.github.PizzaWunsch</groupId>
     <artifactId>ModuledMySQL</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
 </dependency>
 ```
 
