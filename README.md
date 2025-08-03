@@ -88,7 +88,7 @@ repositories {
 Then add the dependency:
 ```gradle
 dependencies {
-    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.0-SNAPSHOT'
+    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.2-SNAPSHOT'
 }
 ```
 
