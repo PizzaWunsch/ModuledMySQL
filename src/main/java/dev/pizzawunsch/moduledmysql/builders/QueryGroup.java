@@ -24,7 +24,7 @@ import java.util.List;
  * List<Object> params = group.getParameters(); // Contains: ["Alice", 30]
  * }</pre>
  * 
- * @author  
+ * @author Lucas | Pizzawunsch
  */
 public class QueryGroup {
     /**
