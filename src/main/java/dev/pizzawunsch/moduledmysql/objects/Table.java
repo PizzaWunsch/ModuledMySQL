@@ -3,6 +3,8 @@ package dev.pizzawunsch.moduledmysql.objects;
 import dev.pizzawunsch.moduledmysql.annotations.ColumnName;
 import dev.pizzawunsch.moduledmysql.annotations.TableName;
 import dev.pizzawunsch.moduledmysql.database.DatabaseManager;
+import dev.pizzawunsch.moduledmysql.exceptions.SQLMissingTableAnnotationException;
+import dev.pizzawunsch.moduledmysql.exceptions.SQLNoColumnsFoundException;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -39,20 +41,20 @@ public abstract class Table {
      * <p>
      * Uses class and field annotations to extract schema metadata and build the SQL statement.
      *
-     * @throws SQLException if the SQL execution fails
-     * @throws IllegalStateException if the class is not annotated with {@link TableName}
+     * @throws SQLMissingTableAnnotationException will be thrown when no table annotation is given.
+     * @throws SQLNoColumnsFoundException will be thrown when no columns are given in the table class.
      */
-    public void createTable() throws SQLException {
+    public void createTable() {
         Class<?> clazz = this.getClass();
 
         if (!clazz.isAnnotationPresent(TableName.class))
-            throw new IllegalStateException("[Moduled - MySQL] Missing @TableName annotation on " + clazz.getSimpleName());
+            throw new SQLMissingTableAnnotationException("Missing @TableName annotation on " + clazz.getSimpleName() + ". Please ensure that a @TableName annotation is given with a unique table name for the mysql database.");
 
         String tableName = clazz.getAnnotation(TableName.class).value();
         List<Column> columnList = extractColumns(clazz);
 
         if (columnList.isEmpty())
-            throw new IllegalStateException("[Moduled - MySQL] No fields annotated with @ColumnName in class: " + clazz.getSimpleName());
+            throw new SQLNoColumnsFoundException("No fields annotated with @ColumnName in class: " + clazz.getSimpleName()+ ". Please ensure that at least one field is annotated with @ColumnName.");
 
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS `" + tableName + "` (\n");
 

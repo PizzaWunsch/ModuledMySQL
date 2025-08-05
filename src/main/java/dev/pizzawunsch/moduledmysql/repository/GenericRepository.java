@@ -82,6 +82,7 @@ public class GenericRepository {
      * @param <T>        the entity type
      * @throws SQLException if any database error occurs
      */
+    @Deprecated
     public static <T> void save(T entity, Connection connection) throws SQLException {
         Class<?> clazz = entity.getClass();
         String table = getTableName(clazz);
@@ -131,6 +132,7 @@ public class GenericRepository {
      * @return the loaded entity instance or null if not found
      * @throws SQLException if SQL execution fails
      */
+    @Deprecated
     public static <T> T load(Class<T> clazz, Object primaryKeyValue, Connection connection) throws SQLException {
         String table = getTableName(clazz);
         Field pkField = getPrimaryKeyField(clazz);
@@ -175,6 +177,7 @@ public class GenericRepository {
      * @param <T>              the entity type
      * @throws SQLException if deletion fails
      */
+    @Deprecated
     public static <T> void delete(Class<T> clazz, Object primaryKeyValue, Connection connection) throws SQLException {
         String table = getTableName(clazz);
         Field pkField = getPrimaryKeyField(clazz);

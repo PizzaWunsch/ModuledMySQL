@@ -2,6 +2,7 @@ package dev.pizzawunsch.moduledmysql.builders;
 
 import dev.pizzawunsch.moduledmysql.annotations.ColumnName;
 import dev.pizzawunsch.moduledmysql.annotations.TableName;
+import dev.pizzawunsch.moduledmysql.exceptions.SQLMissingPrimaryKeyException;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
@@ -121,7 +122,7 @@ public class QueryBuilder {
      * @param clazz    Class representing the table.
      * @param instance Instance containing updated values.
      * @return A new QueryBuilder with the UPDATE statement prepared.
-     * @throws IllegalStateException If no primary key is defined or field values inaccessible.
+     * @throws SQLMissingPrimaryKeyException If no primary key is defined or field values inaccessible.
      */
     public static QueryBuilder update(Class<?> clazz, Object instance) {
         QueryBuilder builder = new QueryBuilder();
@@ -151,7 +152,7 @@ public class QueryBuilder {
         }
 
         if (whereClause == null) {
-            throw new IllegalStateException("No primary key column defined for update in class " + clazz.getName());
+            throw new SQLMissingPrimaryKeyException("No primary key column defined for update in class " + clazz.getName() + ". Please ensure, that this class contains a primary key via the @ColumnName annotation.");
         }
 
         builder.query.append(String.join(", ", sets));
@@ -478,7 +479,7 @@ public class QueryBuilder {
      *
      * @param clazz Class to inspect.
      * @return Primary key column name.
-     * @throws IllegalStateException If no primary key is defined.
+     * @throws SQLMissingPrimaryKeyException If no primary key is defined or field values inaccessible.
      */
     private String getPrimaryKeyColumn(Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
@@ -487,7 +488,7 @@ public class QueryBuilder {
                 return annotation.value();
             }
         }
-        throw new IllegalStateException("No primary key column found in class " + clazz.getName());
+        throw new SQLMissingPrimaryKeyException("No primary key column defined for update in class " + clazz.getName() + ". Please ensure, that this class contains a primary key via the @ColumnName annotation.");
     }
 
     /**
