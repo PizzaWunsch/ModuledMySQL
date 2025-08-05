@@ -61,7 +61,7 @@ public class DatabaseManager {
             connection.close();
             connection = null;
             System.out.println("[Moduled - MySQL] Disconnected from the database.");
-        } catch (SQLDisconnectingException e) {
+        } catch (SQLException e) {
             System.err.println("[Moduled - MySQL] Error while disconnecting.");
             e.printStackTrace();
         }
