@@ -258,7 +258,7 @@ repositories {
 Then add the dependency:
 ```gradle
 dependencies {
-    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.4-SNAPSHOT'
+    implementation 'com.github.PizzaWunsch:ModuledMySQL:1.5-SNAPSHOT'
 }
 ```
 
@@ -278,7 +278,7 @@ Then add the dependency:
 <dependency>
     <groupId>com.github.PizzaWunsch</groupId>
     <artifactId>ModuledMySQL</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
 </dependency>
 ```
 
