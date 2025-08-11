@@ -8,8 +8,12 @@ import lombok.Getter;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -505,4 +509,69 @@ public class QueryBuilder {
         }
         return ps;
     }
+
+    /**
+     * Asynchronously executes a SELECT query and maps the first result row
+     * to an object of the given class.
+     *
+     * @param connection JDBC connection.
+     * @param clazz      Class annotated with @TableName and @ColumnName.
+     * @param <T>        The type of the object to return.
+     * @return CompletableFuture containing the mapped object or null if no row found.
+     */
+    public <T> CompletableFuture<T> executeAsync(Connection connection, Class<T> clazz) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (PreparedStatement ps = prepareStatement(connection);
+                 ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    T instance = clazz.getDeclaredConstructor().newInstance();
+                    for (Field field : clazz.getDeclaredFields()) {
+                        ColumnName col = field.getAnnotation(ColumnName.class);
+                        if (col != null) {
+                            field.setAccessible(true);
+                            field.set(instance, rs.getObject(col.value()));
+                        }
+                    }
+                    return instance;
+                }
+                return null;
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+        });
+    }
+
+    /**
+     * Asynchronously executes a SELECT query and maps all result rows
+     * to a list of objects of the given class.
+     *
+     * @param connection JDBC connection.
+     * @param clazz      Class annotated with @TableName and @ColumnName.
+     * @param <T>        The type of the objects in the list.
+     * @return CompletableFuture containing a list of mapped objects.
+     */
+    public <T> CompletableFuture<List<T>> executeAllAsync(Connection connection, Class<T> clazz) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<T> results = new ArrayList<>();
+            try (PreparedStatement ps = prepareStatement(connection);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    T instance = clazz.getDeclaredConstructor().newInstance();
+                    for (Field field : clazz.getDeclaredFields()) {
+                        ColumnName col = field.getAnnotation(ColumnName.class);
+                        if (col != null) {
+                            field.setAccessible(true);
+                            field.set(instance, rs.getObject(col.value()));
+                        }
+                    }
+                    results.add(instance);
+                }
+                return results;
+
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+        });
+    }
+
 }
